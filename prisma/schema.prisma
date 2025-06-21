@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id       Int    @id @default(autoincrement())
+  name     String
+  logoUrl  String
+  ipos     IPO[]
+}
+
+model IPO {
+  id                  Int       @id @default(autoincrement())
+  companyId           Int
+  priceBand           String
+  openDate            DateTime
+  closeDate           DateTime
+  issueSize           String
+  issueType           String
+  listingDate         DateTime
+  status              IPOStatus
+  ipoPrice            Decimal
+  listingPrice        Decimal
+  listingGain         Decimal
+  currentMarketPrice  Decimal
+  currentReturn       Decimal
+  documents           Document[]
+  company             Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model Document {
+  id        Int    @id @default(autoincrement())
+  ipoId     Int
+  rhpPdf    String
+  drhpPdf   String
+  ipo       IPO    @relation(fields: [ipoId], references: [id], onDelete: Cascade)
+}
+
+enum IPOStatus {
+  UPCOMING
+  OPEN
+  CLOSED
+  LISTED
+}
